@@ -11,7 +11,7 @@ namespace Infrastructure.Data
         public DbSet<Product> Products { get; set; }
         public DbSet<Brand> Brands { get; set; }
         public DbSet<Category> Categories { get; set; }
-        public DbSet<Property> Properties { get; set; }
+        public DbSet<Parameter> Parameters { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

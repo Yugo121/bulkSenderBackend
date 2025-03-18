@@ -4,7 +4,8 @@ namespace Application.Models.DTOs
 {
     public class CategoryDTO
     {
-        public int Id { get; set; }
+        public Guid Id { get; set; }
+        public int BaselinkerId { get; set; }
         public string Name { get; set; }
 
         public CategoryDTO(Category category)
