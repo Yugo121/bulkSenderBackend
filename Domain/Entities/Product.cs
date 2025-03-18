@@ -2,7 +2,8 @@
 {
     public class Product
     {
-        public int Id { get; set; }
+        public Guid Id { get; set; }
+        public int BaselinkerId { get; set; }
         public string Sku { get; set; }
         public string Ean { get; set; }
         public string Name { get; set; }
@@ -11,10 +12,10 @@
         public string MainImage { get; set; }
         public string SecondImage { get; set; }
         public string ThirdImage { get; set; }
-        public int CategoryId { get; set; }
+        public Guid CategoryId { get; set; }
         public Category Category { get; set; }
-        public int BrandId { get; set; }
+        public Guid BrandId { get; set; }
         public Brand Brand { get; set; }
-        public List<Property> Properties { get; set; } = new List<Property>();
+        public List<Parameter> Parameters { get; set; } = new List<Parameter>();
     }
 }

@@ -1,8 +1,9 @@
 ﻿namespace Domain.Entities
 {
-    public class Property
+    public class Parameter
     {
-        public int Id { get; set; }
+        public Guid Id { get; set; }
+        public int BaselinkerId { get; set; }
         public string Name { get; set; }
         public string Value { get; set; }
         public ICollection<Product> Products { get; set; }

@@ -4,7 +4,8 @@ namespace Application.Models.DTOs
 {
     public class ProductDTO
     {
-        public int Id { get; set; }
+        public Guid Id { get; set; }
+        public int BaselinkerId { get; set; }
         public string Sku { get; set; }
         public string Ean { get; set; }
         public string Name { get; set; }
@@ -15,7 +16,7 @@ namespace Application.Models.DTOs
         public string ThirdImage { get; set; }
         public CategoryDTO Category { get; set; }
         public BrandDTO Brand { get; set; }
-        public List<PropertyDTO> Properties { get; set; } = new List<PropertyDTO>();
+        public List<ParameterDTO> Parameters { get; set; } = new List<ParameterDTO>();
 
         ProductDTO(Product product)
         {
@@ -30,7 +31,7 @@ namespace Application.Models.DTOs
             ThirdImage = product.ThirdImage;
             Category = new CategoryDTO(product.Category);
             Brand = new BrandDTO(product.Brand);
-            Properties = product.Properties.Select(p => new PropertyDTO(p)).ToList();
+            Parameters = product.Parameters.Select(p => new ParameterDTO(p)).ToList();
         }
     }
 }
