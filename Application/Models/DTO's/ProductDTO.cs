@@ -18,7 +18,7 @@ namespace Application.Models.DTOs
         public BrandDTO Brand { get; set; }
         public List<ParameterDTO> Parameters { get; set; } = new List<ParameterDTO>();
 
-        ProductDTO(Product product)
+        public ProductDTO(Product product)
         {
             Id = product.Id;
             Sku = product.Sku;
