@@ -8,6 +8,7 @@ namespace Application.Models.DTOs
         public int BaselinkerId { get; set; }
         public string Name { get; set; }
 
+        public CategoryDTO() {}
         public CategoryDTO(Category category)
         {
             Id = category.Id;

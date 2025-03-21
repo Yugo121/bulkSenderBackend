@@ -33,7 +33,7 @@ namespace Application.Models.Commands.ProductsCommands
                     BrandId = productDTO.Brand.Id,
                     Parameters = productDTO.Parameters.Select(p => new Parameter
                     {
-                        Id = Guid.NewGuid(),
+                        Id = p.Id,
                         Name = p.Name,
                         Value = p.Value
                     }).ToList()

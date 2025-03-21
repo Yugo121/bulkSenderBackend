@@ -24,6 +24,16 @@ namespace bulk_sender_backend.Controllers
             return Ok(brand);
         }
 
+        [HttpGet]
+        [Route("api/brands")]
+        public async Task<IActionResult> GetAllBrands()
+        {
+
+           GetAllBrandsQuery query = new GetAllBrandsQuery();
+            List<BrandDTO> brands = await _mediator.Send(query);
+            return Ok(brands);
+        }
+
         [HttpPost]
         [Route("api/brand")]
         public async Task<IActionResult> AddBrand([FromBody] AddBrandCommand command)

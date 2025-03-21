@@ -9,6 +9,8 @@ namespace Application.Models.DTOs
         public string Name { get; set; }
         public string Description { get; set; }
 
+        public BrandDTO() { }
+
         public BrandDTO(Brand brand) 
         {
             Id = brand.Id;

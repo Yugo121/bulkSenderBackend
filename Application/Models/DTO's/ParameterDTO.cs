@@ -9,6 +9,7 @@ namespace Application.Models.DTOs
         public string Name { get; set; }
         public string Value { get; set; }
 
+        public ParameterDTO() {}
         public ParameterDTO(Parameter parameter)
         {
             Id = parameter.Id;

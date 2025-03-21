@@ -23,6 +23,17 @@ namespace bulk_sender_backend.Controllers
             
             return Ok(product);
         }
+
+        [HttpGet]
+        [Route("api/products/{page}/{quantity}")]
+        public async Task<IActionResult> GetManyProducts(int page, int quantity)
+        {
+            GetManyProductsQuery query = new GetManyProductsQuery(page, quantity);
+            List<ProductDTO> products = await _mediator.Send(query);
+
+            return Ok(products);
+        }
+
         [HttpPost]
         [Route("api/product")]
         public async Task<IActionResult> AddProduct([FromBody] AddProductCommand command)

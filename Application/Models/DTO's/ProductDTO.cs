@@ -18,6 +18,8 @@ namespace Application.Models.DTOs
         public BrandDTO Brand { get; set; }
         public List<ParameterDTO> Parameters { get; set; } = new List<ParameterDTO>();
 
+        public ProductDTO() { }
+
         public ProductDTO(Product product)
         {
             Id = product.Id;
