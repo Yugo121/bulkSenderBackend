@@ -4,6 +4,6 @@ namespace Application.Interfaces
 {
     public interface ICsvProductParser
     {
-        List<AddProductCommand> ParseCsv(Stream csvStream, Dictionary<string, string> columnMappings);
+        AddManyProductsCommand ParseCsv(Stream csvStream, Dictionary<string, string> columnMappings);
     }
 }

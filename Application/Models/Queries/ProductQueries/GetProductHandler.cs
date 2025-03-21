@@ -16,6 +16,9 @@ namespace Application.Models.Queries.ProductQueries
         {
             ProductDTO product = await _appDbContext.Products
                 .Where(p => p.Id == request.Id)
+                .Include(p => p.Category)
+                .Include(p => p.Brand)
+                .Include(p => p.Parameters)
                 .Select(p => new ProductDTO(p))
                 .FirstOrDefaultAsync(cancellationToken);
            

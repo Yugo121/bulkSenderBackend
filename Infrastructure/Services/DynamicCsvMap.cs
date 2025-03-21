@@ -8,7 +8,11 @@ namespace Infrastructure.Services
         {
             foreach (var mapping in columnMappings)
             {
-                //Map(typeof(T).GetProperty(mapping.Value)).Name(mapping.Key);
+                var property = typeof(T).GetProperty(mapping.Value);
+                if (property != null)
+                {
+                    Map(m => property.GetValue(m)).Name(mapping.Key);
+                }
             }
         }
     }
