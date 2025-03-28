@@ -4,7 +4,7 @@ namespace Application.Models.DTO_s
 {
     public class CsvImportRequest
     {
-        public Dictionary<string, string> ColumnMappings { get; set; }
-        public IFormFile CsvFile { get; set; }
+        public Dictionary<string, string> Mappings { get; set; } = new();
+        public List<Dictionary<string, string>> Products { get; set; } = new();
     }
 }
