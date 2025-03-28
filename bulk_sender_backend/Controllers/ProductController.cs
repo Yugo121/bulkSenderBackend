@@ -1,4 +1,5 @@
 ﻿using Application.Models.Commands.ProductsCommands;
+using Application.Models.DTO_s;
 using Application.Models.DTOs;
 using Application.Models.Queries.ProductQueries;
 using MediatR;
@@ -40,6 +41,12 @@ namespace bulk_sender_backend.Controllers
         {
             Guid productId = await _mediator.Send(command);
             return Ok(productId);
+        }
+        [HttpPost]
+        [Route("api/products/csv")]
+        public async Task<IActionResult> AddProductsByCsv([FromBody] CsvImportRequest request)
+        {
+            return Ok(request);
         }
         [HttpPut]
         [Route("api/product/edit/{id}")]
