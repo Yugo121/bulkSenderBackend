@@ -22,9 +22,6 @@ namespace Application.Models.Commands.ProductsCommands
             product.Price = request.Product.Price;
             product.Sku = request.Product.Sku;
             product.Ean = request.Product.Ean;
-            product.MainImage = request.Product.MainImage;
-            product.SecondImage = request.Product.SecondImage;
-            product.ThirdImage = request.Product.ThirdImage;
             product.CategoryId = request.Product.Category.Id;
             product.BrandId = request.Product.Brand.Id;
             product.Parameters = request.Product.Parameters.Select(p => new Parameter

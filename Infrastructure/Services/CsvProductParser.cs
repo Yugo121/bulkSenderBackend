@@ -1,25 +1,49 @@
 ﻿using Application.Interfaces;
 using Application.Models.Commands.ProductsCommands;
+using Application.Models.DTO_s;
 using Application.Models.DTOs;
 using CsvHelper;
 using System.Globalization;
+using System.Reflection;
 
 namespace Infrastructure.Services
 {
     public class CsvProductParser : ICsvProductParser
     {
-        public AddManyProductsCommand ParseCsv(Stream csvStream, Dictionary<string, string> columnMappings)
+        public async Task<List<ProductDTO>> ParseCsv(CsvImportRequest import)
         {
-            using var reader = new StreamReader(csvStream);
-            using var csv = new CsvReader(reader, CultureInfo.InvariantCulture);
+            List<ProductDTO> products = new List<ProductDTO>();
+            List<ParameterDTO> parameters = new List<ParameterDTO>();
 
-            csv.Context.RegisterClassMap(new DynamicCsvMap<ProductDTO>(columnMappings));
+            foreach(var importedProduct in import.Products)
+            {
+                
+                ProductDTO product = new ProductDTO();
 
-            List<ProductDTO> products = csv.GetRecords<ProductDTO>().ToList();
+                product.Id = Guid.NewGuid();
+                product.Name = importedProduct.GetValueOrDefault("name");
+                product.Description = importedProduct.GetValueOrDefault("description");
+                product.Price = decimal.Parse(importedProduct.GetValueOrDefault("price"));
+                product.Sku = importedProduct.GetValueOrDefault("sku");
+                product.Ean = importedProduct.GetValueOrDefault("ean");
+                product.Brand = new() { Name = importedProduct.GetValueOrDefault("brand") };
+                product.Category = new() { Name = importedProduct.GetValueOrDefault("category") };
+                product.Parameters = new List<ParameterDTO>();
 
-            AddManyProductsCommand addManyProductsCommand = new(products);
+                foreach (var prop in import.ParameterMappings)
+                {
+                    product.Parameters.Add(new ParameterDTO()
+                    {
+                        Id = Guid.NewGuid(),
+                        Name = prop.Key,
+                        Value = importedProduct.GetValueOrDefault(prop.Key)
+                    });
+                }
 
-            return addManyProductsCommand;
+                products.Add(product);
+            }
+
+            return products;
         }
     }
 }

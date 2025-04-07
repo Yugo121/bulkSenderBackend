@@ -26,9 +26,6 @@ namespace Application.Models.Commands.ProductsCommands
                     Description = productDTO.Description,
                     Sku = productDTO.Sku,
                     Ean = productDTO.Ean,
-                    MainImage = productDTO.MainImage,
-                    SecondImage = productDTO.SecondImage,
-                    ThirdImage = productDTO.ThirdImage,
                     CategoryId = productDTO.Category.Id,
                     BrandId = productDTO.Brand.Id,
                     Parameters = productDTO.Parameters.Select(p => new Parameter
