@@ -1,6 +1,7 @@
-﻿using MediatR;
+﻿using Application.Models.DTO_s;
+using MediatR;
 
 namespace Application.Models.Commands.ProductsCommands
 {
-    public record ImportCsvCommand(Stream csvStream, Dictionary<string, string> columnMappings) : IRequest;
+    public record ImportCsvCommand(CsvImportRequest import) : IRequest;
 }

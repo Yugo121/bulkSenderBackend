@@ -33,6 +33,16 @@ namespace bulk_sender_backend.Controllers
             return Ok(parameters);
         }
 
+        [HttpGet]
+        [Route("api/parameters/names")]
+        public async Task<IActionResult> GetParametersNames()
+        {
+            GetParametersNamesQuery query = new GetParametersNamesQuery();
+            List<string> parametersNames = await _mediator.Send(query);
+
+            return Ok(parametersNames);
+        }
+
         [HttpPost]
         [Route("api/parameter")]
         public async Task<IActionResult> AddParameter([FromBody] AddParameterCommand command)

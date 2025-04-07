@@ -22,6 +22,10 @@ namespace Infrastructure.Data
                 .HasForeignKey(p => p.CategoryId);
 
             modelBuilder.Entity<Product>()
+                .Property(p => p.Price)
+                .HasPrecision(18, 2);
+
+            modelBuilder.Entity<Product>()
                 .HasOne(p => p.Brand)
                 .WithMany(b => b.Products)
                 .HasForeignKey(p => p.BrandId);

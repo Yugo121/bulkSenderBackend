@@ -1,10 +1,11 @@
+using Application;
 using Application.Models.Commands.BrandCommands;
 using Infrastructure;
-using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
 new InfrastructureService(builder.Services, builder.Configuration);
+new ApplicationService(builder.Services, builder.Configuration);
 
 builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(typeof(AddBrandCommand).Assembly));
 builder.Services.AddControllers();
