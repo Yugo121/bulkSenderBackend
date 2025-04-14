@@ -46,9 +46,8 @@ namespace Application.Services
                     Description = "Brand description",
                 };
                 _appDbContext.Brands.Add(brand);
-                await _appDbContext.SaveChangesAsync(cancellationToken);
             }
-
+            await _appDbContext.SaveChangesAsync(cancellationToken);
         }
 
         private async Task ImportCategoriesAsync(List<ProductDTO> products, CancellationToken cancellationToken)
@@ -69,12 +68,12 @@ namespace Application.Services
                     BaselinkerId = 123
                 };
                 _appDbContext.Categories.Add(category);
-                await _appDbContext.SaveChangesAsync(cancellationToken);
             }
 
+            await _appDbContext.SaveChangesAsync(cancellationToken);
         }
 
-        private async Task<string> ImportParametersAsync(List<ProductDTO> products, CancellationToken cancellationToken)
+        private async Task ImportParametersAsync(List<ProductDTO> products, CancellationToken cancellationToken)
         {
             List<ParameterDTO> productParameters = products.Select(p => p.Parameters)
                 .SelectMany(p => p)
@@ -88,6 +87,7 @@ namespace Application.Services
                 .DistinctBy(p => new { p.Name, p.Value })
                 .ToList();
             List<Parameter> paramsToAdd = new();
+
             foreach (var parameterName in newParameters)
             {
                 Parameter parameter = new()
@@ -101,11 +101,9 @@ namespace Application.Services
             }
             _appDbContext.Parameters.AddRange(paramsToAdd);
             await _appDbContext.SaveChangesAsync(cancellationToken);
-
-            return "ok";
         }
 
-        private async Task<string> ImportProductsAsync(List<ProductDTO> products, CancellationToken cancellationToken)
+        private async Task ImportProductsAsync(List<ProductDTO> products, CancellationToken cancellationToken)
         {
             List<string> eansInDb = _appDbContext.Products
                 .Select(p => p.Ean)
@@ -153,14 +151,10 @@ namespace Application.Services
 
                 _appDbContext.Products.AddRange(productsToAdd);
                 await _appDbContext.SaveChangesAsync(cancellationToken);
-
-                return "ok";
-
             }
             catch (Exception ex)
             {
                 Console.WriteLine("Error: ", ex.Message);
-                return ":(";
             }
         }
 

@@ -34,6 +34,15 @@ namespace bulk_sender_backend.Controllers
             return Ok(brands);
         }
 
+        [HttpGet]
+        [Route("api/brands/names")]
+        public async Task<IActionResult> GetBrandsNames()
+        {
+            GetBrandsNamesQuery query = new GetBrandsNamesQuery();
+            List<string> brandsNames = await _mediator.Send(query);
+            return Ok(brandsNames);
+        }
+
         [HttpPost]
         [Route("api/brand")]
         public async Task<IActionResult> AddBrand([FromBody] AddBrandCommand command)

@@ -22,6 +22,8 @@ namespace Application.Models.Queries.ParameterQueries
 
             parametersNames = await _appDbContext.Parameters
                 .Select(p => p.Name)
+                .Distinct()
+                .OrderBy(name => name)
                 .ToListAsync(cancellationToken);
 
             return parametersNames;
