@@ -19,7 +19,9 @@ namespace Application.Models.Queries.ParameterQueries
                 .Select(p => new ParameterDTO(p))
                 .ToListAsync(cancellationToken);
 
-            return parameters;
+            List<ParameterDTO> distinctedParameters = parameters.DistinctBy(p => p.Name).ToList();
+
+            return distinctedParameters;
         }
     }
 }
