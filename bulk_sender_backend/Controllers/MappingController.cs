@@ -3,7 +3,6 @@ using Application.Models.DTO_s;
 using Application.Models.Queries.MappingQueries;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using System.Text.Json;
 
 namespace bulk_sender_backend.Controllers
 {

@@ -5,6 +5,7 @@ namespace Application.Models.DTOs
     public class ProductDTO
     {
         public Guid Id { get; set; }
+        public int BaselinkerParentId { get; set; }
         public int BaselinkerId { get; set; }
         public string Sku { get; set; }
         public string Ean { get; set; }

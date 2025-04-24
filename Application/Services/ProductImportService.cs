@@ -42,7 +42,7 @@ namespace Application.Services
                 {
                     Id = new Guid(),
                     Name = brandName,
-                    BaselinkerId = 123,
+                    BaselinkerId = 0,
                     Description = "Brand description",
                 };
                 _appDbContext.Brands.Add(brand);
@@ -65,7 +65,9 @@ namespace Application.Services
                 {
                     Id = new Guid(),
                     Name = categoryName,
-                    BaselinkerId = 123
+                    BaselinkerId = products.Where(p => p.Category.Name == categoryName)
+                                    .Select(p => p.BaselinkerId)
+                                    .FirstOrDefault()
                 };
                 _appDbContext.Categories.Add(category);
             }
@@ -95,7 +97,7 @@ namespace Application.Services
                     Id = new Guid(),
                     Name = parameterName.Name,
                     Value = parameterName.Value,
-                    BaselinkerId = 123
+                    BaselinkerId = 0
                 };
                 paramsToAdd.Add(parameter);
             }

@@ -38,6 +38,15 @@ namespace bulk_sender_backend.Controllers
             return Ok(categories);
         }
 
+        [HttpGet]
+        [Route("api/categories/names")]
+        public async Task<IActionResult> GetCategoriesNames()
+        {
+            GetCategoriesNamesQuery query = new GetCategoriesNamesQuery();
+            List<string> categories = await _mediator.Send(query);
+            return Ok(categories);
+        }
+
         [HttpPost]
         [Route("api/category")]
         public async Task<IActionResult> AddCategory([FromBody] AddCategoryCommand command)

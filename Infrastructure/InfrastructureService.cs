@@ -21,6 +21,7 @@ namespace Infrastructure
 
             services.AddScoped<IAppDbContext>(provider => provider.GetRequiredService<AppDbContext>());
             services.AddScoped<ICsvProductParser, CsvProductParser>();
+            services.AddHttpClient<IBaselinkerService, BaselinkerService>();
         }
     }
 }
