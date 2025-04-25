@@ -9,5 +9,6 @@ namespace Application.Interfaces
         public string GenerateDescription(ProductDTO product, MappingDTO mapping);
         public string GenerateParametersString(ProductDTO product);
         public ProductToBaselinkerDTO PrepareProduct(ProductDTO product, MappingDTO mapping);
+        public string ExtractMainSku(string sku);
     }
 }
