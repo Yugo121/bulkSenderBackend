@@ -49,9 +49,9 @@ namespace Application.Services
             {
                 Id = product.BaselinkerId,
                 ParentId = product.BaselinkerParentId,
-                Prices = new Dictionary<string, decimal>
+                Prices = new Dictionary<int, decimal>
                 {
-                    { "PLN", product.Price }
+                    { 3276, product.Price }
                 },
                 CategoryId = mapping.Category.BaselinkerId,
                 BrandId = mapping.Brand.BaselinkerId,
@@ -65,6 +65,18 @@ namespace Application.Services
                     {"description_extra1", product.Brand.Description }
                 }
             };
+        }
+        public string ExtractMainSku(string sku) 
+        {
+            if (sku.Contains("R.") && !sku.Contains("_OS"))
+                return sku.Split("R.")[0].Trim();
+            if (sku.Contains("_") && !sku.Contains("_OS"))
+            {
+                int lastUnderscoreIndex = sku.LastIndexOf('_');
+                return sku.Substring(0, lastUnderscoreIndex).Trim();
+            }
+
+            return sku;
         }
     }
 }

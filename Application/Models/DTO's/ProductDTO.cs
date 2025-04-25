@@ -7,6 +7,7 @@ namespace Application.Models.DTOs
         public Guid Id { get; set; }
         public int BaselinkerParentId { get; set; }
         public int BaselinkerId { get; set; }
+        public bool IsAddedToBaselinker { get; set; }
         public string Sku { get; set; }
         public string Ean { get; set; }
         public string Name { get; set; }
@@ -24,6 +25,7 @@ namespace Application.Models.DTOs
             Sku = product.Sku;
             Ean = product.Ean;
             Name = product.Name;
+            IsAddedToBaselinker = product.IsAddedToBaselinker;
             Description = product.Description;
             Price = product.Price;
             Category = new CategoryDTO(product.Category);

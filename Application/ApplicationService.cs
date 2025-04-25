@@ -10,6 +10,7 @@ namespace Application
         public ApplicationService(IServiceCollection services, IConfiguration configuration)
         {
             services.AddScoped<IProductImportService, ProductImportService>();
+            services.AddScoped<IProductPreparationService, ProductPreparationService>();
         }
 
     }

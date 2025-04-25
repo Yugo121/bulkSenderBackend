@@ -5,6 +5,7 @@
         public Guid Id { get; set; }
         public int BaselinkerParentId { get; set; }
         public int BaselinkerId { get; set; }
+        public bool IsAddedToBaselinker { get; set; }
         public string Sku { get; set; }
         public string Ean { get; set; }
         public string Name { get; set; }

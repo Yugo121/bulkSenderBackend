@@ -1,4 +1,5 @@
 ﻿using Application.Interfaces;
+using Application.Models.DTO_s;
 using Application.Models.DTOs;
 using System.Text.Json;
 
@@ -75,19 +76,19 @@ namespace Infrastructure.Services
             return "Error occured while tried to download categories";
         }
 
-        public async Task<int> SendProductToBaselinker(ProductDTO product, CancellationToken cancellationToken)
+        public async Task<int> SendProductToBaselinker(ProductToBaselinkerDTO product, CancellationToken cancellationToken)
         {
             var payload = new
             {
 
-                inventory_id = "tu dać inv id z bla",
+                inventory_id = 4158,
                 ean = product.Ean,
                 sku = product.Sku,
-                manufacturer_id = product.Brand.BaselinkerId,
-                category_id = product.Category.BaselinkerId,
-                prices = "tutaj trzeba dac dictionary z ceną przynajmniej w pln",
-                stock = "dodać do produktu quantity i przekazywać tu",
-                text_fields = "pola tekstowe, tutaj będzie nazwa opis i chyba parametry ale jeszcze sprawdzić"
+                manufacturer_id = product.BrandId,
+                category_id = product.CategoryId,
+                prices = product.Prices,
+                stock = 0,
+                text_fields = product.TextFields
             };
 
             var apiParams = new Dictionary<string, string>
