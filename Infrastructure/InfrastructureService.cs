@@ -13,13 +13,15 @@ namespace Infrastructure
         {
             var connectionString = configuration.GetConnectionString("DefaultConnection");
 
-            services.AddDbContext<AppDbContext>(options =>
-            {
-                options.UseSqlServer(connectionString);
-                
-            });
+            services.AddDbContextFactory<AppDbContext>(options =>
+                options.UseSqlServer(connectionString)
+                       .EnableSensitiveDataLogging()
+            );
 
-            services.AddScoped<IAppDbContext>(provider => provider.GetRequiredService<AppDbContext>());
+            services.AddScoped<IAppDbContext>(sp =>
+                sp.GetRequiredService<IDbContextFactory<AppDbContext>>().CreateDbContext()
+            );
+
             services.AddScoped<ICsvProductParser, CsvProductParser>();
             services.AddHttpClient<IBaselinkerService, BaselinkerService>();
         }

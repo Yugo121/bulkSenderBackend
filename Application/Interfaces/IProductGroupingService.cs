@@ -1,11 +1,13 @@
-﻿using Application.Models.DTOs;
-using Domain.Entities;
+﻿using Application.Models.DTO_s;
+using Application.Models.DTOs;
 
 namespace Application.Interfaces
 {
     public interface IProductGroupingService
     {
-        public Task<(string mainSku, List<ProductDTO> children)> GroupProductsAsync(ProductDTO product, CancellationToken cancellationToken);
+        public Task<List<ProductDTO>> GroupProductsAsync(ProductDTO product, CancellationToken cancellationToken);
         public Task UpdateParentIdAsync(List<ProductDTO> children, int parentId, CancellationToken cancellationToken);
+        public Task<MappingDTO> GetMappingForProduct(ProductDTO product, CancellationToken cancellationToken);
+        public Task<bool> SetProductBaselinkerFlag(ProductDTO product, CancellationToken cancellationToken);
     }
 }

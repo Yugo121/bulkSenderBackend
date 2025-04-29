@@ -1,9 +1,6 @@
 using Application;
 using Application.Models.Commands.BrandCommands;
 using Infrastructure;
-using Newtonsoft.Json;
-using System.Text.Json.Serialization;
-using System.Text.Json;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -26,7 +23,6 @@ builder.Services.AddControllers()
     .AddJsonOptions(options =>
     {
         options.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
-       // options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
     }); 
 
 var app = builder.Build();

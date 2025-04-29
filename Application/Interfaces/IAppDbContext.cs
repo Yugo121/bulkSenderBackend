@@ -1,5 +1,6 @@
 ﻿using Domain.Entities;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 
 namespace Application.Interfaces
 {
@@ -13,5 +14,7 @@ namespace Application.Interfaces
         public DbSet<MappingEntry> MappingEntries { get; set; }
 
         Task<int> SaveChangesAsync(CancellationToken cancellationToken);
+
+        DatabaseFacade Database { get; }
     }
 }

@@ -11,7 +11,7 @@ namespace Application.Models.Commands.ProductsCommands
     {
         private readonly IProductImportService _productImportService;
 
-        public ImportCsvHandler(IProductImportService productImportService, IAppDbContext appDbContext)
+        public ImportCsvHandler(IProductImportService productImportService)
         {
             _productImportService = productImportService;
         }

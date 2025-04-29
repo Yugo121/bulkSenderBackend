@@ -1,93 +1,56 @@
 ﻿using Application.Interfaces;
-using Application.Models.DTO_s;
-using Application.Models.DTOs;
-using Domain.Entities;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 
 namespace Application.Models.Commands.BaselinkerCommands
 {
-    public class AddProductToBaselinkerHandler : IRequestHandler<AddProductToBaselinkerCommand, int>
+    public class AddProductToBaselinkerHandler : IRequestHandler<AddProductToBaselinkerCommand, List<int>>
     {
         private readonly IBaselinkerService _baselinkerService;
+        private readonly IProductGroupingService _productGroupingService;
         private readonly IProductPreparationService _productPreparationService;
-        private readonly IAppDbContext _appDbContext;
 
-        public AddProductToBaselinkerHandler(IBaselinkerService baselinkerService, IProductPreparationService productPreparationService, IAppDbContext appDbContext)
+        public AddProductToBaselinkerHandler(IBaselinkerService baselinkerService, IProductPreparationService productPreparationService, IProductGroupingService productGroupingService)
         {
             _baselinkerService = baselinkerService;
             _productPreparationService = productPreparationService;
-            _appDbContext = appDbContext;
+            _productGroupingService = productGroupingService;
         }
-        public async Task<int> Handle(AddProductToBaselinkerCommand request, CancellationToken cancellationToken)
+        public async Task<List<int>> Handle(AddProductToBaselinkerCommand request, CancellationToken cancellationToken)
         {
-            string mainSKu = _productPreparationService.ExtractMainSku(request.product.Sku);
+            List<int> newProductsIds = new List<int>();
 
-            var productGroup = await _appDbContext.Products.Where(p => p.Sku.Contains(mainSKu)).ToListAsync(cancellationToken);
-
-            MappingDTO mappingForProduct = new(await _appDbContext.Mappings
-                .FirstOrDefaultAsync(m => m.CategoryId == request.product.Category.Id && m.BrandId == request.product.Brand.Id));
+            var productGroup = await _productGroupingService.GroupProductsAsync(request.product, cancellationToken);
+            var mapping = await _productGroupingService.GetMappingForProduct(request.product, cancellationToken);
 
             if (request.product.BaselinkerParentId == 0 && !request.product.Sku.Contains("_OS"))
             {
-                var productToSend = _productPreparationService.PrepareProduct(request.product, mappingForProduct);
+                request.product.Sku = _productPreparationService.ExtractMainSku(request.product.Sku);
 
-                int result = await _baselinkerService.SendProductToBaselinker(productToSend, cancellationToken);
+                var productPayload = _productPreparationService.PrepareProduct(request.product, mapping);
 
-                foreach (var item in productGroup)
-                {
-                    item.BaselinkerParentId = result;
-                    _appDbContext.Products.Update(item);
-                }
-                await _appDbContext.SaveChangesAsync(cancellationToken);
+                Console.WriteLine($"Product: {productPayload}");
 
-                return result;
+                int parentProductId = await _baselinkerService.SendProductToBaselinker(productPayload, cancellationToken);
+
+                newProductsIds.Add(parentProductId);
+
+                await _productGroupingService.UpdateParentIdAsync(productGroup, parentProductId, cancellationToken);
             } else
             {
-                List<ProductDTO> productsToSend = productGroup.Select(p => new ProductDTO
+                foreach (var product in productGroup)
                 {
-                    BaselinkerParentId = p.BaselinkerParentId,
-                    Id = p.Id,
-                    Sku = p.Sku,
-                    Ean = p.Ean,
-                    Name = p.Name,
-                    Description = p.Description,
-                    Price = p.Price,
-                    Category = new CategoryDTO
-                    {
-                        Id = p.CategoryId,
-                        Name = p.Category.Name,
-                        BaselinkerId = p.Category.BaselinkerId
-                    },
-                    Brand = new BrandDTO
-                    {
-                        Id = p.BrandId,
-                        Name = p.Brand.Name,
-                        BaselinkerId = p.Brand.BaselinkerId,
-                        Description = p.Brand.Description
-                    },
-                    Parameters = p.Parameters.Select(pr => new ParameterDTO
-                    {
-                        Id = pr.Id,
-                        Name = pr.Name,
-                        Value = pr.Value,
-                        BaselinkerId = pr.BaselinkerId
-                    }).ToList()
-                }).ToList();
+                    if(product.IsAddedToBaselinker)
+                        continue;
 
-                int result = 0;
+                    var productPayload = _productPreparationService.PrepareProduct(product, mapping);
 
-                foreach (var product in productsToSend)
-                {
-                   var item = _productPreparationService.PrepareProduct(product, mappingForProduct);
+                    await _productGroupingService.SetProductBaselinkerFlag(product, cancellationToken);
 
-                   result = await _baselinkerService.SendProductToBaselinker(item, cancellationToken);
-
+                    newProductsIds.Add(await _baselinkerService.SendProductToBaselinker(productPayload, cancellationToken));
                 }
-
-                return result;
             }
 
+            return newProductsIds;
         }
     }
 }
