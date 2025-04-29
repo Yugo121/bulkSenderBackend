@@ -46,7 +46,7 @@ namespace bulk_sender_backend.Controllers
         [Route("api/products/csv")]
         public async Task<IActionResult> AddProductsByCsv([FromBody] CsvImportRequest request)
         {
-            _mediator.Send(new ImportCsvCommand(request));
+            await _mediator.Send(new ImportCsvCommand(request));
             return Ok(request);
         }
         [HttpPut]

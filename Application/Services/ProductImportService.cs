@@ -30,17 +30,18 @@ namespace Application.Services
         private async Task ImportBrandsAsync(List<ProductDTO> products, CancellationToken cancellationToken)
         {
             List<string> brandNames = products.Select(p => p.Brand.Name).Distinct().ToList();
-            List<string> brandNamesInDb =  _appDbContext.Brands
-                .Where(b => brandNames.Contains(b.Name))
-                .Select(b => b.Name)
-                .ToList();
+
+            List<string> brandNamesInDb = await _appDbContext.Brands
+                    .Where(b => brandNames.Contains(b.Name))
+                    .Select(b => b.Name)
+                    .ToListAsync(cancellationToken);
             List<string> newBrandNames = brandNames.Except(brandNamesInDb).ToList();
 
             foreach(var brandName in newBrandNames)
             {
                 Brand brand = new()
                 {
-                    Id = new Guid(),
+                    Id = Guid.NewGuid(),
                     Name = brandName,
                     BaselinkerId = 0,
                     Description = "Brand description",
@@ -52,22 +53,27 @@ namespace Application.Services
 
         private async Task ImportCategoriesAsync(List<ProductDTO> products, CancellationToken cancellationToken)
         {
-            List<string> categoriesNames = products.Select(p => p.Category.Name).Distinct().ToList();
-            List<string> categoriesNamesInDb =  _appDbContext.Categories
-                .Where(c => categoriesNames.Contains(c.Name))
-                .Select(c => c.Name)
+            var distinctCategoriesFromProducts = products.Select(p => p.Category).GroupBy(c => c.Name).Select(c => c.First()).ToList();
+            var categoriesInDb = await _appDbContext.Categories
+                .Where(c => distinctCategoriesFromProducts.Select(x => x.Name).Contains(c.Name))
+                .Select(c => new { c.Name, c.BaselinkerName })
+                .ToListAsync(cancellationToken);
+            var existingNames = new HashSet<string>(categoriesInDb.Select(c => c.Name));
+            var newCategories = distinctCategoriesFromProducts
+                .Where(c => !existingNames.Contains(c.Name))
+                .Select(c => new { c.Name, c.BaselinkerName })
                 .ToList();
-            List<string> newCategoriesNames = categoriesNames.Except(categoriesNamesInDb).ToList();
 
-            foreach (var categoryName in newCategoriesNames)
+            foreach (var cat in newCategories)
             {
                 Category category = new()
                 {
-                    Id = new Guid(),
-                    Name = categoryName,
-                    BaselinkerId = products.Where(p => p.Category.Name == categoryName)
+                    Id = Guid.NewGuid(),
+                    Name = cat.Name,
+                    BaselinkerId = products.Where(p => p.Category.Name == cat.Name)
                                     .Select(p => p.BaselinkerId)
-                                    .FirstOrDefault()
+                                    .FirstOrDefault(),
+                    BaselinkerName = cat.BaselinkerName,
                 };
                 _appDbContext.Categories.Add(category);
             }
@@ -81,9 +87,9 @@ namespace Application.Services
                 .SelectMany(p => p)
                 .Distinct()
                 .ToList();
-            List<ParameterDTO> parametersInDb =  _appDbContext.Parameters
+            List<ParameterDTO> parametersInDb = await _appDbContext.Parameters
                 .Select(p => new ParameterDTO(p))
-                .ToList(); 
+                .ToListAsync(cancellationToken); 
             List<ParameterDTO> newParameters = productParameters
                 .Where(p => !parametersInDb.Any(dbParam => dbParam.Name == p.Name && dbParam.Value == p.Value))
                 .DistinctBy(p => new { p.Name, p.Value })
@@ -94,7 +100,7 @@ namespace Application.Services
             {
                 Parameter parameter = new()
                 {
-                    Id = new Guid(),
+                    Id = Guid.NewGuid(),
                     Name = parameterName.Name,
                     Value = parameterName.Value,
                     BaselinkerId = 0
@@ -107,9 +113,9 @@ namespace Application.Services
 
         private async Task ImportProductsAsync(List<ProductDTO> products, CancellationToken cancellationToken)
         {
-            List<string> eansInDb = _appDbContext.Products
+            List<string> eansInDb = await _appDbContext.Products
                 .Select(p => p.Ean)
-                .ToList();
+                .ToListAsync(cancellationToken);
             List<ProductDTO> newProducts = products.Where(p => !eansInDb.Contains(p.Ean)).ToList();
 
             List<Product> productsToAdd = new();
@@ -119,7 +125,7 @@ namespace Application.Services
                 {
                     var matchedParameters = await _appDbContext.Parameters
                         .Where(p => dto.Parameters.Select(pd => pd.Name).Contains(p.Name))
-                        .ToListAsync();
+                        .ToListAsync(cancellationToken);
 
                     var productParameters = matchedParameters
                         .Select(p => new Parameter
@@ -141,11 +147,11 @@ namespace Application.Services
                         CategoryId = await _appDbContext.Categories
                         .Where(c => c.Name == dto.Category.Name)
                         .Select(c => c.Id)
-                        .FirstOrDefaultAsync(),
+                        .FirstOrDefaultAsync(cancellationToken),
                         BrandId =  await _appDbContext.Brands
                         .Where(b => b.Name == dto.Brand.Name)
                         .Select(b => b.Id)
-                        .FirstOrDefaultAsync(),
+                        .FirstOrDefaultAsync(cancellationToken),
                         Parameters = productParameters
                     };
                     productsToAdd.Add(product);

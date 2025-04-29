@@ -27,7 +27,7 @@ namespace Infrastructure.Services
                 product.Sku = importedProduct.GetValueOrDefault("sku");
                 product.Ean = importedProduct.GetValueOrDefault("ean");
                 product.Brand = new() { Name = importedProduct.GetValueOrDefault("brand") };
-                product.Category = new() { Name = importedProduct.GetValueOrDefault("category.name"), BaselinkerId = Int32.Parse(importedProduct.GetValueOrDefault("category.baselinkerId")) };
+                product.Category = new() { Name = importedProduct.GetValueOrDefault("category.name"), BaselinkerId = Int32.Parse(importedProduct.GetValueOrDefault("category.baselinkerId")), BaselinkerName = importedProduct.GetValueOrDefault("category.baselinkerName") };
                 product.Parameters = new List<ParameterDTO>();
 
                 foreach (var prop in import.ParameterMappings)

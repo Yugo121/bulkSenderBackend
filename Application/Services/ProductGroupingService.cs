@@ -2,6 +2,7 @@
 using Application.Models.DTO_s;
 using Application.Models.DTOs;
 using Domain.Entities;
+using MediatR;
 using Microsoft.EntityFrameworkCore;
 
 namespace Application.Services
@@ -15,9 +16,10 @@ namespace Application.Services
             _appDbContext = appDbContext;
             _productPreparationService = productPreparationService;
         }
-        public async Task<(string mainSku, List<ProductDTO> children)> GroupProductsAsync(ProductDTO product, CancellationToken cancellationToken)
+        public async Task<List<ProductDTO>> GroupProductsAsync(ProductDTO product, CancellationToken cancellationToken)
         {
             string mainSku = _productPreparationService.ExtractMainSku(product.Sku);
+
             var entities = await _appDbContext.Products
                 .Include(p => p.Category)
                 .Include(p => p.Brand)
@@ -27,8 +29,38 @@ namespace Application.Services
 
             var dtos = entities.Select(p => MapToDTO(p)).ToList();
 
-            return (mainSku, dtos);
+            return dtos;
 
+        }
+
+        public async Task<MappingDTO> GetMappingForProduct(ProductDTO product, CancellationToken cancellationToken)
+        {
+            var mapping = await _appDbContext.Mappings
+                .Include(m => m.Category)
+                .Include(m => m.Brand)
+                .Include(m => m.MappingEntries)
+                .FirstOrDefaultAsync(m => m.CategoryId == product.Category.Id && m.BrandId == product.Brand.Id, cancellationToken);
+
+            if (mapping == null)
+                throw new InvalidOperationException($"Brak mapowania dla kategorii {product.Category.Id} i marki {product.Brand.Id}");
+
+            return new MappingDTO
+            {
+                Id = mapping.Id,
+                Category = new CategoryDTO(mapping.Category),
+                Brand = new BrandDTO(mapping.Brand),
+                Description = mapping.Description,
+                Title = mapping.Title,
+                Name = mapping.Name,
+                MappingEntriesDTO = mapping.MappingEntries
+                    .Select(me => new MappingEntryDTO
+                    {
+                        Id = me.Id,
+                        ColumnName = me.ColumnName,
+                        TargetField = me.TargetField,
+                        MappingType = me.MappingType
+                    }).ToList()
+            };  
         }
 
         public async Task UpdateParentIdAsync(List<ProductDTO> children, int parentId, CancellationToken cancellationToken)
@@ -41,8 +73,24 @@ namespace Application.Services
                     product.BaselinkerParentId = parentId;
                     _appDbContext.Products.Update(product);
                 }
-                await _appDbContext.SaveChangesAsync(cancellationToken);
             }
+            await _appDbContext.SaveChangesAsync(cancellationToken);
+        }
+
+        public async Task<bool> SetProductBaselinkerFlag(ProductDTO product, CancellationToken cancellationToken)
+        {
+            var productEntity = await _appDbContext.Products
+                .FirstOrDefaultAsync(p => p.Id == product.Id, cancellationToken);
+
+            if (productEntity == null)
+                return false;
+
+            productEntity.IsAddedToBaselinker = true;
+
+            _appDbContext.Products.Update(productEntity);
+            await _appDbContext.SaveChangesAsync(cancellationToken);
+
+            return true;
         }
 
         private ProductDTO MapToDTO(Product product)

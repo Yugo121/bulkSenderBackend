@@ -81,13 +81,18 @@ namespace Infrastructure.Services
             var payload = new
             {
 
-                inventory_id = 4158,
+                inventory_id = 4158, //id katalogu piaskownica, potem zmienić na katalog główny
+                parent_id = product.ParentId,
                 ean = product.Ean,
                 sku = product.Sku,
                 manufacturer_id = product.BrandId,
                 category_id = product.CategoryId,
                 prices = product.Prices,
-                stock = 0,
+                stock = new Dictionary<int, int>
+                {
+                    { 5248, 0 }, //id magazynu głównego,
+                    { 13577, 0 } //id magazynu testowego
+                },
                 text_fields = product.TextFields
             };
 

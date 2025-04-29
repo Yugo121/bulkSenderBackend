@@ -3,5 +3,5 @@ using MediatR;
 
 namespace Application.Models.Commands.BaselinkerCommands
 {
-    public record AddProductToBaselinkerCommand(ProductDTO product) : IRequest<int>;
+    public record AddProductToBaselinkerCommand(ProductDTO product) : IRequest<List<int>>;
 }
