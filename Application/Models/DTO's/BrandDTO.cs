@@ -15,6 +15,7 @@ namespace Application.Models.DTOs
         public BrandDTO(Brand brand) 
         {
             Id = brand.Id;
+            BaselinkerId = brand.BaselinkerId;
             Name = brand.Name;
             Description = brand.Description;
         }

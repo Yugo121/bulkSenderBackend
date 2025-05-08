@@ -1,5 +1,5 @@
-﻿using System.Data;
-using System.Text.Json.Serialization;
+﻿using System.Text.Json.Serialization;
+using Domain.Enums;
 
 namespace Application.Models.DTO_s
 {

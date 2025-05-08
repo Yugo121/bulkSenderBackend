@@ -24,6 +24,7 @@ namespace Application.Models.Commands.ProductsCommands
                     Name = productDTO.Name,
                     Price = productDTO.Price,
                     Description = productDTO.Description,
+                    IsAddedToBaselinker = false,
                     Sku = productDTO.Sku,
                     Ean = productDTO.Ean,
                     CategoryId = productDTO.Category.Id,

@@ -22,6 +22,7 @@ namespace Application.Models.Commands.ProductsCommands
                 Description = request.Product.Description,
                 Sku = request.Product.Sku,
                 Ean = request.Product.Ean,
+                IsAddedToBaselinker = false,
                 CategoryId = request.Product.Category.Id,
                 BrandId = request.Product.Brand.Id,
                 Parameters = request.Product.Parameters.Select(p => new Parameter

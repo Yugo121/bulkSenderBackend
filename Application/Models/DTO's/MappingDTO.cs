@@ -1,5 +1,6 @@
 ﻿using Application.Models.DTOs;
 using Domain.Entities;
+using Domain.Enums;
 using System.Text.Json.Serialization;
 
 namespace Application.Models.DTO_s
@@ -27,7 +28,7 @@ namespace Application.Models.DTO_s
             MappingEntriesDTO = mapping.MappingEntries.Select(p => new MappingEntryDTO
             {
                 Id = p.Id,
-                //MappingType = p.MappingType,
+                MappingType = p.MappingType,
                 ColumnName = p.ColumnName,
                 TargetField = p.TargetField,
             }).ToList();

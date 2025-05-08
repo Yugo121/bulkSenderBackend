@@ -34,6 +34,25 @@ namespace bulk_sender_backend.Controllers
 
             return Ok(products);
         }
+        [HttpGet]
+        [Route("api/products/search/notInBl/{page}/{quantity}")]
+        public async Task<IActionResult> GetProductsNotInBaselinker(int page, int quantity)
+        {
+            GetProductsNotAddedToBaselinkerQuery query = new GetProductsNotAddedToBaselinkerQuery(page, quantity);
+            List<ProductDTO> products = await _mediator.Send(query);
+
+            return Ok(products);
+        }
+
+        [HttpGet]
+        [Route("api/products/search/notInBl/all")]
+        public async Task<IActionResult> GetProductsNotInBaselinkerCount()
+        {
+            GetProductsNotAddedToBlCount query = new GetProductsNotAddedToBlCount();
+            int count = await _mediator.Send(query);
+
+            return Ok(count);
+        }
 
         [HttpPost]
         [Route("api/product")]

@@ -1,6 +1,6 @@
 ﻿using Application.Interfaces;
 using Application.Models.DTO_s;
-using Application.Models.DTOs;
+using Microsoft.Extensions.Configuration;
 using System.Text.Json;
 
 namespace Infrastructure.Services
@@ -8,9 +8,11 @@ namespace Infrastructure.Services
     internal class BaselinkerService : IBaselinkerService
     {
         private readonly HttpClient _httpClient;
-        public BaselinkerService(HttpClient httpClient)
+        private readonly string _token;
+        public BaselinkerService(HttpClient httpClient, IConfiguration config)
         {
             _httpClient = httpClient;
+            _token = config["Baselinker:Token"];
         }
         public async Task<string> GetBrands(CancellationToken cancellationToken)
         {
@@ -27,7 +29,7 @@ namespace Infrastructure.Services
                 Content = content
             };
             
-            request.Headers.Add("X-BLToken", "tu dać token z baselinkera");
+            request.Headers.Add("X-BLToken", _token);
             
             var response = _httpClient.SendAsync(request, cancellationToken);
             
@@ -47,8 +49,9 @@ namespace Infrastructure.Services
         {
             var parameters = new
             {
-                invnetory_id = "tu dać inv id z bla",
+                inventory_id = 4158,
             };
+
             var apiParams = new Dictionary<string, string>
             {
                 { "method", "getInventoryCategories" },
@@ -61,7 +64,7 @@ namespace Infrastructure.Services
             {
                 Content = content
             };
-            request.Headers.Add("X-BLToken", "tu dać token z baselinkera");
+            request.Headers.Add("X-BLToken", _token);
 
             var response = _httpClient.SendAsync(request, cancellationToken);
             string result = await response.Result.Content.ReadAsStringAsync(cancellationToken);
@@ -85,7 +88,7 @@ namespace Infrastructure.Services
                 parent_id = product.ParentId,
                 ean = product.Ean,
                 sku = product.Sku,
-                manufacturer_id = product.BrandId,
+               // manufacturer_id = product.BrandId,
                 category_id = product.CategoryId,
                 prices = product.Prices,
                 stock = new Dictionary<int, int>
@@ -98,7 +101,7 @@ namespace Infrastructure.Services
 
             var apiParams = new Dictionary<string, string>
             {
-                { "method", "addInventoryItem" },
+                { "method", "addInventoryProduct" },
                 { "parameters", JsonSerializer.Serialize(payload) }
             };
 
@@ -109,7 +112,7 @@ namespace Infrastructure.Services
                 Content = content
             };
 
-            request.Headers.Add("X-BLToken", "tu dać token z baselinkera");
+            request.Headers.Add("X-BLToken", _token);
 
             var response = await _httpClient.SendAsync(request, cancellationToken);
             string result = await response.Content.ReadAsStringAsync(cancellationToken);
