@@ -23,7 +23,9 @@ builder.Services.AddControllers()
     .AddJsonOptions(options =>
     {
         options.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
-    }); 
+    });
+
+builder.Configuration.AddUserSecrets<Program>();
 
 var app = builder.Build();
 

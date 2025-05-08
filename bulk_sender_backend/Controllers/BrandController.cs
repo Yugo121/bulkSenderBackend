@@ -53,9 +53,11 @@ namespace bulk_sender_backend.Controllers
 
         [HttpPut]
         [Route("api/brand/edit/{id}")]
-        public async Task<IActionResult> UpdateBrand(Guid id, [FromBody] EditBrandCommand command)
+        public async Task<IActionResult> UpdateBrand([FromRoute] Guid id, [FromBody] EditBrandCommand command)
         {
-            command.Brand.Id = id;
+            if(id != command.Brand.Id)
+                return BadRequest("Brand ID mismatch");
+
             Guid brandId = await _mediator.Send(command);
             return Ok(brandId);
         }

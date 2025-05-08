@@ -19,7 +19,7 @@ namespace Application.Models.Queries.ProductQueries
                 .Include(p => p.Category)
                 .Include(p => p.Brand)
                 .Include(p => p.Parameters)
-                .Skip(request.page - 1 * request.quantity)
+                .Skip((request.page - 1) * request.quantity)
                 .Take(request.quantity)
                 .Select(p => new ProductDTO(p))
                 .ToListAsync();
