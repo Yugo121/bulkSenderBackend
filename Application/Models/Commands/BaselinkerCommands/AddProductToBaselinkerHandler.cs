@@ -1,4 +1,5 @@
 ﻿using Application.Interfaces;
+using Application.Models.DTOs;
 using MediatR;
 
 namespace Application.Models.Commands.BaselinkerCommands
@@ -24,31 +25,37 @@ namespace Application.Models.Commands.BaselinkerCommands
 
             if (request.product.BaselinkerParentId == 0 && !request.product.Sku.Contains("_OS"))
             {
-                request.product.Sku = _productPreparationService.ExtractMainSku(request.product.Sku);
+                ProductDTO mainProduct = request.product;
+                mainProduct.Sku = _productPreparationService.ExtractMainSku(request.product.Sku);
 
-                var productPayload = _productPreparationService.PrepareProduct(request.product, mapping);
-
-                Console.WriteLine($"Product: {productPayload}");
+                var productPayload = _productPreparationService.PrepareProduct(mainProduct, mapping);
 
                 int parentProductId = await _baselinkerService.SendProductToBaselinker(productPayload, cancellationToken);
 
                 newProductsIds.Add(parentProductId);
 
+                foreach(var item in productGroup)
+                    item.BaselinkerParentId = parentProductId;
+
+                //poprawić tak aby tworzyło od razu produkt głowny i warianty.
                 await _productGroupingService.UpdateParentIdAsync(productGroup, parentProductId, cancellationToken);
-            } else
-            {
-                foreach (var product in productGroup)
-                {
-                    if(product.IsAddedToBaselinker)
-                        continue;
-
-                    var productPayload = _productPreparationService.PrepareProduct(product, mapping);
-
-                    await _productGroupingService.SetProductBaselinkerFlag(product, cancellationToken);
-
-                    newProductsIds.Add(await _baselinkerService.SendProductToBaselinker(productPayload, cancellationToken));
-                }
             }
+
+            foreach (var product in productGroup)
+            {
+                if (product.IsAddedToBaselinker)
+                    continue;
+
+                var productPayload = _productPreparationService.PrepareProduct(product, mapping);
+
+                var productId = await _baselinkerService.SendProductToBaselinker(productPayload, cancellationToken);
+
+                newProductsIds.Add(productId);
+
+                await _productGroupingService.SetProductBaselinkerFlagAndId(product, productId, cancellationToken);
+
+            }
+
 
             return newProductsIds;
         }

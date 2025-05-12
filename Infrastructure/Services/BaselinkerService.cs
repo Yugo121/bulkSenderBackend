@@ -88,13 +88,12 @@ namespace Infrastructure.Services
                 parent_id = product.ParentId,
                 ean = product.Ean,
                 sku = product.Sku,
-               // manufacturer_id = product.BrandId,
+                manufacturer_id = product.BrandId,
                 category_id = product.CategoryId,
                 prices = product.Prices,
-                stock = new Dictionary<int, int>
+                stock = new Dictionary<string, int>
                 {
-                    { 5248, 0 }, //id magazynu głównego,
-                    { 13577, 0 } //id magazynu testowego
+                    { "bl_5248", 0 }, //id magazynu głównego,
                 },
                 text_fields = product.TextFields
             };

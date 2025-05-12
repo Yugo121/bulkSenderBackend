@@ -56,9 +56,9 @@ namespace bulk_sender_backend.Controllers
 
         [HttpPost]
         [Route("api/product")]
-        public async Task<IActionResult> AddProduct([FromBody] AddProductCommand command)
+        public async Task<IActionResult> AddProduct([FromBody] ProductDTO product)
         {
-            Guid productId = await _mediator.Send(command);
+            Guid productId = await _mediator.Send(new AddProductCommand(product));
             return Ok(productId);
         }
         [HttpPost]
@@ -70,10 +70,10 @@ namespace bulk_sender_backend.Controllers
         }
         [HttpPut]
         [Route("api/product/edit/{id}")]
-        public async Task<IActionResult> UpdateProduct(Guid id, [FromBody] EditProductCommand command)
+        public async Task<IActionResult> UpdateProduct(Guid id, [FromBody] ProductDTO product)
         {
-            command.Product.Id = id;
-            Guid productId = await _mediator.Send(command);
+            product.Id = id;
+            Guid productId = await _mediator.Send(new EditProductCommand(product));
             return Ok(productId);
         }
         [HttpDelete]
