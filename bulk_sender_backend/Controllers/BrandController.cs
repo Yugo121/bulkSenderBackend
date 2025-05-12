@@ -45,9 +45,9 @@ namespace bulk_sender_backend.Controllers
 
         [HttpPost]
         [Route("api/brand")]
-        public async Task<IActionResult> AddBrand([FromBody] AddBrandCommand command)
+        public async Task<IActionResult> AddBrand([FromBody] BrandDTO brand)
         {
-            Guid brandId = await _mediator.Send(command);
+            Guid brandId = await _mediator.Send(new AddBrandCommand(brand));
             return Ok(brandId);
         }
 

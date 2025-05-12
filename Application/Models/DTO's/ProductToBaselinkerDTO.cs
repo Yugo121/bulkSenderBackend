@@ -9,6 +9,6 @@
         public Dictionary<int, decimal> Prices { get; set; }
         public int CategoryId { get; set; }
         public int BrandId { get; set; }
-        public Dictionary<string, string> TextFields { get; set; }
+        public Dictionary<string, object?> TextFields { get; set; }
     }
 }

@@ -77,7 +77,7 @@ namespace Application.Services
             await _appDbContext.SaveChangesAsync(cancellationToken);
         }
 
-        public async Task<bool> SetProductBaselinkerFlag(ProductDTO product, CancellationToken cancellationToken)
+        public async Task<bool> SetProductBaselinkerFlagAndId(ProductDTO product, int id, CancellationToken cancellationToken)
         {
             var productEntity = await _appDbContext.Products
                 .FirstOrDefaultAsync(p => p.Id == product.Id, cancellationToken);

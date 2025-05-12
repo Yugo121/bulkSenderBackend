@@ -45,6 +45,12 @@ namespace Application.Services
             string description = GenerateDescription(product, mapping);
             string parametersString = GenerateParametersString(product);
 
+            Dictionary<string, string> parametersDictionary = new Dictionary<string, string>();
+            foreach (var parameter in product.Parameters)
+            {
+                parametersDictionary.Add(parameter.Name, parameter.Value);
+            }
+
             return new ProductToBaselinkerDTO
             {
                 Id = product.BaselinkerId,
@@ -53,16 +59,25 @@ namespace Application.Services
                 {
                     { 3276, product.Price }
                 },
-                CategoryId = mapping.Category.BaselinkerId,
+                CategoryId = 3013902, //mapping.Category.BaselinkerId,
                 BrandId = mapping.Brand.BaselinkerId,
                 Sku = product.Sku,
                 Ean = product.Ean,
-                TextFields = new Dictionary<string, string>
+                TextFields = new Dictionary<string, object?>
                 {
-                    { "title", title },
+                    { "name", title },
                     { "description", description },
-                    { "features", parametersString },
-                    {"description_extra1", product.Brand.Description }
+                    { "features", parametersDictionary },
+                    {"description_extra1", product.Brand.Description },
+                    { "extra_field_7262", ExtractMainSku(product.Sku) }, //main sku miinto
+                    {"extra_field_7665", (int)(product.Price * 100) }, //cena miinto
+                    {"extra_field_7524", ExtractMainSku(product.Sku) }, // sku miinto bez koloru
+                    { "extra_field_7423", parametersDictionary.FirstOrDefault(p => p.Key == "hs code").Value ?? "" }, //hs code
+                    {"extra_field_7424", parametersDictionary.FirstOrDefault(p => p.Key == "country of origin").Value ?? ""}, // kraj pochodzenia
+                    {"extra_field_7525", parametersDictionary.FirstOrDefault(p => p.Key == "miinto tytuł").Value ?? "" }, // nazwa miinto
+                    {"extra_field_7526", parametersDictionary.FirstOrDefault(p => p.Key == "color").Value ?? ""}, // kolor miinto
+                    {"extra_field_7527", parametersDictionary.FirstOrDefault(p => p.Key == "size").Value ?? "" }, // rozmiar miinto
+                    {"extra_field_7528", parametersDictionary.FirstOrDefault(p => p.Key == "gender").Value ?? "" } // płeć
                 }
             };
         }
