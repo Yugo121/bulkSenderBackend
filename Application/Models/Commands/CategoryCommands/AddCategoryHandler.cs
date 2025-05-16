@@ -18,7 +18,12 @@ namespace Application.Models.Commands.CategoryCommands
             Category category = new()
             {
                 Id = Guid.NewGuid(),
-                Name = request.category.Name,
+                Aliases = request.category.Aliases.Select(a => new CategoryAlias
+                {
+                    Id = a.Id,
+                    Name = a.Name,
+                    CategoryId = a.CategoryId
+                }).ToList(),
                 BaselinkerId = request.category.BaselinkerId
             };
 

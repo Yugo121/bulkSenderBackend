@@ -53,26 +53,56 @@ namespace Application.Services
 
         private async Task ImportCategoriesAsync(List<ProductDTO> products, CancellationToken cancellationToken)
         {
-            var distinctCategoriesFromProducts = products.Select(p => p.Category).GroupBy(c => c.Name).Select(c => c.First()).ToList();
-            var categoriesInDb = await _appDbContext.Categories
-                .Where(c => distinctCategoriesFromProducts.Select(x => x.Name).Contains(c.Name))
-                .Select(c => new { c.Name, c.BaselinkerName })
-                .ToListAsync(cancellationToken);
-            var existingNames = new HashSet<string>(categoriesInDb.Select(c => c.Name));
+            var distinctCategoriesFromProducts = products.Select(p => p.Category).DistinctBy(cat =>
+        string.Join("|",
+            cat.Aliases
+               .Select(a => a.Name)
+               .OrderBy(n => n)
+        )).ToList();
+            var categoriesAliases = distinctCategoriesFromProducts.SelectMany(c => c.Aliases.Select(ca => ca.Name)).Distinct().ToList();
+
+            var baselinkerIds = distinctCategoriesFromProducts.Select(c => c.BaselinkerId).Distinct().ToList();
+
+            var categoriesInDb = await _appDbContext.Categories.Include(c => c.Aliases)
+                .Where(c => baselinkerIds.Contains(c.BaselinkerId)).ToListAsync(cancellationToken);
+
+            var existingAliasNames = new HashSet<string>(categoriesInDb
+                .SelectMany(c => c.Aliases.Select(a => a.Name)));
+
             var newCategories = distinctCategoriesFromProducts
-                .Where(c => !existingNames.Contains(c.Name))
-                .Select(c => new { c.Name, c.BaselinkerName })
+                .Where(cat => cat.Aliases.Any(alias => !existingAliasNames.Contains(alias.Name)))
                 .ToList();
+
 
             foreach (var cat in newCategories)
             {
+                var existingCategory = categoriesInDb.FirstOrDefault(c => c.BaselinkerId == cat.BaselinkerId);
+
+                if(existingCategory != null)
+                {
+                    foreach (var alias in cat.Aliases)
+                    {
+                        if (!existingCategory.Aliases.Any(a => a.Name == alias.Name))
+                        {
+                            existingCategory.Aliases.Add(new CategoryAlias
+                            {
+                                Id = Guid.NewGuid(),
+                                Name = alias.Name,
+                            });
+                        }  
+                    }
+
+                    continue;
+                }
                 Category category = new()
                 {
                     Id = Guid.NewGuid(),
-                    Name = cat.Name,
-                    BaselinkerId = products.Where(p => p.Category.Name == cat.Name)
-                                    .Select(p => p.BaselinkerId)
-                                    .FirstOrDefault(),
+                    Aliases = cat.Aliases.Select(alias => new CategoryAlias
+                    {
+                        Id = Guid.NewGuid(),
+                        Name = alias.Name,
+                    }).ToList(),
+                    BaselinkerId = cat.BaselinkerId,
                     BaselinkerName = cat.BaselinkerName,
                 };
                 _appDbContext.Categories.Add(category);
@@ -144,10 +174,7 @@ namespace Application.Services
                         Name = dto.Name,
                         Description = dto.Description,
                         Price = dto.Price,
-                        CategoryId = await _appDbContext.Categories
-                        .Where(c => c.Name == dto.Category.Name)
-                        .Select(c => c.Id)
-                        .FirstOrDefaultAsync(cancellationToken),
+                        CategoryId = await _appDbContext.Categories.Where(c => c.Id == dto.Category.Id).Select(c => c.Id).FirstOrDefaultAsync(cancellationToken),
                         BrandId =  await _appDbContext.Brands
                         .Where(b => b.Name == dto.Brand.Name)
                         .Select(b => b.Id)

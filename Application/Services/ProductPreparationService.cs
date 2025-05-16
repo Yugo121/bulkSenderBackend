@@ -31,7 +31,7 @@ namespace Application.Services
 
         public string GenerateTitle(ProductDTO product, MappingDTO mapping)
         {
-            return $"{product.Category.Name} " +
+            return $"{product.Category.BaselinkerName} " +
                 $"{product.Brand.Name} " +
                 $"{product.Name} " +
                 $"{product.Parameters?.FirstOrDefault(p => p.Name.ToLower().Contains("rozmiar"))?.Value}" +
@@ -59,7 +59,7 @@ namespace Application.Services
                 {
                     { 3276, product.Price }
                 },
-                CategoryId = 3013902, //mapping.Category.BaselinkerId,
+                CategoryId = product.Category.BaselinkerId, //mapping.Category.BaselinkerId,
                 BrandId = mapping.Brand.BaselinkerId,
                 Sku = product.Sku,
                 Ean = product.Ean,
