@@ -14,9 +14,12 @@ namespace Application.Models.Queries.CategoryQueries
         }
         public async Task<List<string>> Handle(GetCategoriesNamesQuery request, CancellationToken cancellationToken)
         {
+            //List<string> categoriesNames = await _appDbContext.Categories
+            //    .Select(c => c.Name)
+            //    .ToListAsync();
             List<string> categoriesNames = await _appDbContext.Categories
-                .Select(c => c.Name)
-                .ToListAsync();
+                .Select(c => c.Aliases.FirstOrDefault().Name)
+                .ToListAsync(cancellationToken);
 
             return categoriesNames;
         }

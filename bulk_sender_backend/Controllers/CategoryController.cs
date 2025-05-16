@@ -1,11 +1,7 @@
-﻿using Application.Models.Commands.BrandCommands;
-using Application.Models.Commands.CategoryCommands;
+﻿using Application.Models.Commands.CategoryCommands;
 using Application.Models.DTOs;
-using Application.Models.Queries.BrandQueries;
 using Application.Models.Queries.CategoryQueries;
-using Domain.Entities;
 using MediatR;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 
 namespace bulk_sender_backend.Controllers
@@ -49,17 +45,21 @@ namespace bulk_sender_backend.Controllers
 
         [HttpPost]
         [Route("api/category")]
-        public async Task<IActionResult> AddCategory([FromBody] AddCategoryCommand command)
+        public async Task<IActionResult> AddCategory([FromBody] CategoryDTO category)
         {
+            AddCategoryCommand command = new AddCategoryCommand(category);
             Guid categoryId = await _mediator.Send(command);
             return Ok(categoryId);
         }
 
         [HttpPut]
         [Route("api/category/edit/{id}")]
-        public async Task<IActionResult> UpdateCategory(Guid id, [FromBody] EditCategoryCommand command)
+        public async Task<IActionResult> UpdateCategory(Guid id, [FromBody]  CategoryDTO category)
         {
-            command.Category.Id = id;
+            if (id != category.Id)
+                return BadRequest("Category ID mismatch");
+
+            EditCategoryCommand command = new EditCategoryCommand(category);
             Guid categoryId = await _mediator.Send(command);
 
             return Ok(categoryId);

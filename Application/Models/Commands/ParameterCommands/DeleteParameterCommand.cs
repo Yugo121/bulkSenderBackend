@@ -3,5 +3,5 @@ using MediatR;
 
 namespace Application.Models.Commands.ParameterCommands
 {
-    public record DeleteParameterCommand(Guid ParameterId) : IRequest<Guid>;
+    public record DeleteParameterCommand(string Name) : IRequest<int>;
 }

@@ -45,8 +45,9 @@ namespace bulk_sender_backend.Controllers
 
         [HttpPost]
         [Route("api/parameter")]
-        public async Task<IActionResult> AddParameter([FromBody] AddParameterCommand command)
+        public async Task<IActionResult> AddParameter([FromBody] ParameterDTO parameter)
         {
+            AddParameterCommand command = new AddParameterCommand(parameter);
             Guid parameterId = await _mediator.Send(command);
             return Ok(parameterId);
         }
@@ -62,13 +63,13 @@ namespace bulk_sender_backend.Controllers
         }
 
         [HttpDelete]
-        [Route("api/parameter/delete/{id}")]
-        public async Task<IActionResult> DeleteParameter(Guid id)
+        [Route("api/parameter/delete/{name}")]
+        public async Task<IActionResult> DeleteParameter(string name)
         {
-            DeleteParameterCommand command = new DeleteParameterCommand(id);
-            Guid parameterId = await _mediator.Send(command);
+            DeleteParameterCommand command = new DeleteParameterCommand(name);
+            int deletedCount = await _mediator.Send(command);
 
-            return Ok(parameterId);
+            return Ok(deletedCount);
         }
     }
 }

@@ -17,7 +17,12 @@ namespace Application.Models.Commands.CategoryCommands
         {
             Category category = await _appDbContext.Categories.FirstOrDefaultAsync(c => c.Id == request.Category.Id);
 
-            category.Name = request.Category.Name;
+            category.Aliases = request.Category.Aliases.Select(a => new CategoryAlias
+            {
+                Id = a.Id,
+                Name = a.Name,
+                CategoryId = a.CategoryId
+            }).ToList();
             category.BaselinkerId = request.Category.BaselinkerId;
 
             await _appDbContext.SaveChangesAsync(cancellationToken);

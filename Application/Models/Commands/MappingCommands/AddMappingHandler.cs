@@ -14,8 +14,8 @@ namespace Application.Models.Commands.MappingCommands
         }
         public async Task<Guid> Handle(AddMappingCommand request, CancellationToken cancellationToken)
         {
-            Brand brand = await _appDbContext.Brands.FirstOrDefaultAsync(b => b.Name == request.mapping.Brand.Name, cancellationToken);
-            Category category = await _appDbContext.Categories.FirstOrDefaultAsync(c => c.Name == request.mapping.Category.Name, cancellationToken);
+            Brand brand =  await _appDbContext.Brands.FirstOrDefaultAsync(b => b.Name == request.mapping.Brand.Name, cancellationToken);
+            Category category = await _appDbContext.Categories.FirstOrDefaultAsync(c => c.Id == request.mapping.Category.Id, cancellationToken);
 
             Mapping mapping = new()
             {

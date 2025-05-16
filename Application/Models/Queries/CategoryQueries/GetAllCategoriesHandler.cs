@@ -16,6 +16,7 @@ namespace Application.Models.Queries.CategoryQueries
         public async Task<List<CategoryDTO>> Handle(GetAllCategoriesQuery request, CancellationToken cancellationToken)
         {
             List<CategoryDTO> categories = await _appDbContext.Categories
+                .Include(c => c.Aliases)
                 .Select(c => new CategoryDTO(c))
                 .ToListAsync(cancellationToken);
 
