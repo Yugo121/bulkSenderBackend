@@ -43,7 +43,7 @@ namespace Application.Models.Commands.BaselinkerCommands
 
             foreach (var product in productGroup)
             {
-                if (product.IsAddedToBaselinker)
+                if (product.IsAddedToBaselinker && product.BaselinkerParentId != 0)
                     continue;
 
                 var productPayload = _productPreparationService.PrepareProduct(product, mapping);

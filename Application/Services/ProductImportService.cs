@@ -172,9 +172,9 @@ namespace Application.Services
                         Sku = dto.Sku,
                         Ean = dto.Ean,
                         Name = dto.Name,
-                        Description = dto.Description,
+                        Description = dto.Description ?? "",
                         Price = dto.Price,
-                        CategoryId = await _appDbContext.Categories.Where(c => c.Id == dto.Category.Id).Select(c => c.Id).FirstOrDefaultAsync(cancellationToken),
+                        CategoryId = await _appDbContext.Categories.Where(c => c.BaselinkerId == dto.Category.BaselinkerId).Select(c => c.Id).FirstOrDefaultAsync(cancellationToken),
                         BrandId =  await _appDbContext.Brands
                         .Where(b => b.Name == dto.Brand.Name)
                         .Select(b => b.Id)

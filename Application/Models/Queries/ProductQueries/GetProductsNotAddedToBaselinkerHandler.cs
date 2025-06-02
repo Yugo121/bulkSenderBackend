@@ -21,6 +21,7 @@ namespace Application.Models.Queries.ProductQueries
                 .Skip((request.page - 1) * request.quantityPerPage)
                 .Take(request.quantityPerPage)
                 .Include(p => p.Category)
+                    .ThenInclude(c => c.Aliases)
                 .Include(p => p.Brand)
                 .Include(p => p.Parameters)
                 .AsSplitQuery()

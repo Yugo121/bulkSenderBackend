@@ -22,6 +22,7 @@ namespace Application.Services
 
             var entities = await _appDbContext.Products
                 .Include(p => p.Category)
+                    .ThenInclude(c => c.Aliases)
                 .Include(p => p.Brand)
                 .Include(p => p.Parameters)
                 .Where(p => p.Sku.Contains(mainSku))
@@ -37,6 +38,7 @@ namespace Application.Services
         {
             var mapping = await _appDbContext.Mappings
                 .Include(m => m.Category)
+                    .ThenInclude(c => c.Aliases)
                 .Include(m => m.Brand)
                 .Include(m => m.MappingEntries)
                 .FirstOrDefaultAsync(m => m.CategoryId == product.Category.Id && m.BrandId == product.Brand.Id, cancellationToken);
