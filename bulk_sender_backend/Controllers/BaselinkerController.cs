@@ -18,7 +18,7 @@ namespace bulk_sender_backend.Controllers
         [Route("api/baselinker/products")]
         public async Task<IActionResult> AddProductToBaselinker([FromBody] ProductDTO product, CancellationToken cancellation)
         {
-            product.Category.BaselinkerId = 3013902;
+            //product.Category.BaselinkerId = 3013902;
             List<int> ids = await _mediator.Send(new AddProductToBaselinkerCommand(product));
 
             return Ok(ids);

@@ -19,6 +19,7 @@ namespace Application.Models.Queries.MappingQueries
                 .Include(m => m.MappingEntries)
                 .Include(m => m.Brand)
                 .Include(m => m.Category)
+                    .ThenInclude(c => c.Aliases)
                 .FirstOrDefaultAsync(m => m.Name == request.name, cancellationToken);
 
             if (searchedMapping == null)

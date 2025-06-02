@@ -59,7 +59,7 @@ namespace Application.Services
                 {
                     { 3276, product.Price }
                 },
-                CategoryId = product.Category.BaselinkerId, //mapping.Category.BaselinkerId,
+                CategoryId = product.Category.BaselinkerId,
                 BrandId = mapping.Brand.BaselinkerId,
                 Sku = product.Sku,
                 Ean = product.Ean,
@@ -71,13 +71,13 @@ namespace Application.Services
                     {"description_extra1", product.Brand.Description },
                     { "extra_field_7262", ExtractMainSku(product.Sku) }, //main sku miinto
                     {"extra_field_7665", (int)(product.Price * 100) }, //cena miinto
-                    {"extra_field_7524", ExtractMainSku(product.Sku) }, // sku miinto bez koloru
-                    { "extra_field_7423", parametersDictionary.FirstOrDefault(p => p.Key == "hs code").Value ?? "" }, //hs code
-                    {"extra_field_7424", parametersDictionary.FirstOrDefault(p => p.Key == "country of origin").Value ?? ""}, // kraj pochodzenia
-                    {"extra_field_7525", parametersDictionary.FirstOrDefault(p => p.Key == "miinto tytuł").Value ?? "" }, // nazwa miinto
-                    {"extra_field_7526", parametersDictionary.FirstOrDefault(p => p.Key == "color").Value ?? ""}, // kolor miinto
-                    {"extra_field_7527", parametersDictionary.FirstOrDefault(p => p.Key == "size").Value ?? "" }, // rozmiar miinto
-                    {"extra_field_7528", parametersDictionary.FirstOrDefault(p => p.Key == "gender").Value ?? "" } // płeć
+                    {"extra_field_7524", parametersDictionary.FirstOrDefault(p => p.Key == "sku bez koloru").Value ?? "" }, // sku miinto bez koloru
+                    { "extra_field_7423", parametersDictionary.FirstOrDefault(p => p.Key == "hscode").Value ?? "" }, //hs code
+                    {"extra_field_7424", parametersDictionary.FirstOrDefault(p => p.Key == "kraj pochodzenia").Value ?? ""}, // kraj pochodzenia
+                    {"extra_field_7525", parametersDictionary.FirstOrDefault(p => p.Key == "tytuł").Value ?? "" }, // nazwa miinto
+                    {"extra_field_7526", parametersDictionary.FirstOrDefault(p => p.Key == "Kolor").Value ?? ""}, // kolor miinto
+                    {"extra_field_7527", parametersDictionary.FirstOrDefault(p => p.Key == "rozmiar").Value ?? "" }, // rozmiar miinto
+                    {"extra_field_7528", parametersDictionary.FirstOrDefault(p => p.Key == "płec").Value ?? "" } // płeć
                 }
             };
         }
