@@ -78,19 +78,21 @@ namespace Application.Services
             {
                 var existingCategory = categoriesInDb.FirstOrDefault(c => c.BaselinkerId == cat.BaselinkerId);
 
-                if(existingCategory != null)
+                if (existingCategory != null)
                 {
                     foreach (var alias in cat.Aliases)
                     {
                         if (!existingCategory.Aliases.Any(a => a.Name == alias.Name))
                         {
-                            existingCategory.Aliases.Add(new CategoryAlias
+                            _appDbContext.CategoryAliases.Add(new CategoryAlias
                             {
                                 Id = Guid.NewGuid(),
                                 Name = alias.Name,
+                                CategoryId = existingCategory.Id
                             });
                         }  
                     }
+                    await _appDbContext.SaveChangesAsync(cancellationToken);
 
                     continue;
                 }
