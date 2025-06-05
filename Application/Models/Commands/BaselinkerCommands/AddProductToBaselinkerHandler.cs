@@ -37,7 +37,6 @@ namespace Application.Models.Commands.BaselinkerCommands
                 foreach(var item in productGroup)
                     item.BaselinkerParentId = parentProductId;
 
-                //poprawić tak aby tworzyło od razu produkt głowny i warianty.
                 await _productGroupingService.UpdateParentIdAsync(productGroup, parentProductId, cancellationToken);
             }
 

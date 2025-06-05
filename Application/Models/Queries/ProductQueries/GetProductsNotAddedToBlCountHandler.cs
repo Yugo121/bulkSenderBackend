@@ -14,7 +14,7 @@ namespace Application.Models.Queries.ProductQueries
         public async Task<int> Handle(GetProductsNotAddedToBlCount request, CancellationToken cancellationToken)
         {
             int count = await _appDbContext.Products
-                .Where(p => !p.IsAddedToBaselinker)
+                .Where(p => p.IsAddedToBaselinker != true)
                 .CountAsync(cancellationToken);
 
             return count;
