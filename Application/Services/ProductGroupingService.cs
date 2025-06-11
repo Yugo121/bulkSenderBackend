@@ -88,6 +88,7 @@ namespace Application.Services
                 return false;
 
             productEntity.IsAddedToBaselinker = true;
+            productEntity.BaselinkerId = id;
 
             _appDbContext.Products.Update(productEntity);
             await _appDbContext.SaveChangesAsync(cancellationToken);
