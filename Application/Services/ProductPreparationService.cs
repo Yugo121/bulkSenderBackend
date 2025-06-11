@@ -21,7 +21,7 @@ namespace Application.Services
                 if (string.IsNullOrWhiteSpace(parameter.Name) || string.IsNullOrWhiteSpace(parameter.Value))
                     continue;
                 if (parameter.Name == "Sku bez koloru" ||
-                    parameter.Name == "HS code" ||
+                    parameter.Name == "HS Code" ||
                     parameter.Name == "Kraj pochodzenia" || 
                     parameter.Name == "Oznaczenie płci")
                     continue;
@@ -41,8 +41,8 @@ namespace Application.Services
         {
             return $"{product.Category.BaselinkerName} " +
                 $"{product.Brand.Name} " +
-                $"{product.Parameters?.FirstOrDefault(p => p.Name.ToLower().Contains("size"))?.Value} " +
-                $"{product.Parameters?.FirstOrDefault(p => p.Name.ToLower().Contains("color"))?.Value}";
+                $"{product.Parameters?.FirstOrDefault(p => p.Name.ToLower().Contains("rozmiar"))?.Value} " +
+                $"{product.Parameters?.FirstOrDefault(p => p.Name.ToLower().Contains("kolor"))?.Value}";
             
         }
 
@@ -57,6 +57,25 @@ namespace Application.Services
             {
                 if(string.IsNullOrWhiteSpace(parameter.Name) || string.IsNullOrWhiteSpace(parameter.Value))
                     continue;
+
+                if(parameter.Name.ToLower() == "płeć")
+                {
+                    switch(parameter.Value.ToLower())
+                    {
+                        case "męskie":
+                            parametersDictionary.Add("Oznaczenie płci", "M");
+                            break;
+                        case "damskie":
+                            parametersDictionary.Add("Oznaczenie płci", "F");
+
+                            break;
+                        case "unisex":
+                            parameter.Value = "U";
+                            break;
+                        default:
+                            break;
+                    }
+                }
 
                 parametersDictionary.Add(parameter.Name, parameter.Value);
             }
@@ -84,13 +103,13 @@ namespace Application.Services
                     {"description_extra1", product.Brand.Description },
                     { "extra_field_7262", ExtractMainSku(product.Sku) }, //main sku miinto
                     {"extra_field_7665", (int)(product.Price * 100) }, //cena miinto
-                    {"extra_field_7524", ExtractMainSku(product.Sku) }, // sku miinto bez koloru
-                    { "extra_field_7423", parametersDictionary.FirstOrDefault(p => p.Key == "HS Code").Value ?? "" }, //hs code
-                    {"extra_field_7424", parametersDictionary.FirstOrDefault(p => p.Key == "Kraj pochodzenia").Value ?? ""}, // kraj pochodzenia
+                    {"extra_field_7524", parametersDictionary.FirstOrDefault(p => p.Key.ToLower() == "sku bez koloru").Value ?? "" }, // sku miinto bez koloru
+                    { "extra_field_7423", parametersDictionary.FirstOrDefault(p => p.Key.ToLower() == "hs code").Value ?? "" }, //hs code
+                    {"extra_field_7424", parametersDictionary.FirstOrDefault(p => p.Key.ToLower() == "kraj pochodzenia").Value ?? ""}, // kraj pochodzenia
                     {"extra_field_7525", product.Name ?? "" }, // nazwa miinto
-                    {"extra_field_7526", parametersDictionary.FirstOrDefault(p => p.Key == "Color").Value ?? ""}, // kolor miinto
-                    {"extra_field_7527", parametersDictionary.FirstOrDefault(p => p.Key == "Size").Value ?? "" }, // rozmiar miinto
-                    {"extra_field_7528", parametersDictionary.FirstOrDefault(p => p.Key == "Oznaczenie płci").Value ?? "" } // płeć
+                    {"extra_field_7526", parametersDictionary.FirstOrDefault(p => p.Key.ToLower() == "kolor").Value ?? ""}, // kolor miinto
+                    {"extra_field_7527", parametersDictionary.FirstOrDefault(p => p.Key.ToLower() == "rozmiar").Value ?? "" }, // rozmiar miinto
+                    {"extra_field_7528", parametersDictionary.FirstOrDefault(p => p.Key.ToLower() == "oznaczenie płci").Value ?? "" } // płeć
                 }
             };
         }

@@ -49,7 +49,7 @@ namespace Infrastructure.Services
         {
             var parameters = new
             {
-                inventory_id = 4158,
+                inventory_id = 10621, //id kat głowny
             };
 
             var apiParams = new Dictionary<string, string>
@@ -84,7 +84,7 @@ namespace Infrastructure.Services
             var payload = new
             {
 
-                inventory_id = 4158, //id katalogu piaskownica, potem zmienić na katalog główny
+                inventory_id = 10621, //id kat głowny
                 parent_id = product.ParentId,
                 ean = product.Ean,
                 sku = product.Sku,
@@ -122,8 +122,13 @@ namespace Infrastructure.Services
                 int productId = doc.RootElement.GetProperty("product_id").GetInt32();
                 return productId;
             }
-
-            return 0;
+            else
+            {
+                var status = (int)response.StatusCode;
+                throw new HttpRequestException(
+                    $"Request failed. Status code: {status} ({response.StatusCode}). Response content: {result}"
+                );
+            }
         }
     }
 }
