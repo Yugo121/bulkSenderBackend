@@ -2,6 +2,7 @@
 using Application.Models.DTO_s;
 using Application.Models.DTOs;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace Application.Services
 {
@@ -50,6 +51,7 @@ namespace Application.Services
         {
             string title = GenerateTitle(product, mapping);
             string description = GenerateDescription(product, mapping);
+            string descriptionWithoutHtml = Regex.Replace(description, "<.*?>", string.Empty);
             string parametersString = GenerateParametersString(product);
 
             Dictionary<string, string> parametersDictionary = new Dictionary<string, string>();
@@ -100,16 +102,17 @@ namespace Application.Services
                     { "name", title },
                     { "description", description },
                     { "features", parametersDictionary },
-                    {"description_extra1", product.Brand.Description },
+                    { "description_extra1", product.Brand.Description },
+                    { "description_extra2", descriptionWithoutHtml },
                     { "extra_field_7262", ExtractMainSku(product.Sku) }, //main sku miinto
-                    {"extra_field_7665", (int)(product.Price * 100) }, //cena miinto
-                    {"extra_field_7524", parametersDictionary.FirstOrDefault(p => p.Key.ToLower() == "sku bez koloru").Value ?? "" }, // sku miinto bez koloru
+                    { "extra_field_7665", (int)(product.Price * 100) }, //cena miinto
+                    { "extra_field_7524", parametersDictionary.FirstOrDefault(p => p.Key.ToLower() == "sku bez koloru").Value ?? "" }, // sku miinto bez koloru
                     { "extra_field_7423", parametersDictionary.FirstOrDefault(p => p.Key.ToLower() == "hs code").Value ?? "" }, //hs code
-                    {"extra_field_7424", parametersDictionary.FirstOrDefault(p => p.Key.ToLower() == "kraj pochodzenia").Value ?? ""}, // kraj pochodzenia
-                    {"extra_field_7525", product.Name ?? "" }, // nazwa miinto
-                    {"extra_field_7526", parametersDictionary.FirstOrDefault(p => p.Key.ToLower() == "kolor").Value ?? ""}, // kolor miinto
-                    {"extra_field_7527", parametersDictionary.FirstOrDefault(p => p.Key.ToLower() == "rozmiar").Value ?? "" }, // rozmiar miinto
-                    {"extra_field_7528", parametersDictionary.FirstOrDefault(p => p.Key.ToLower() == "oznaczenie płci").Value ?? "" } // płeć
+                    { "extra_field_7424", parametersDictionary.FirstOrDefault(p => p.Key.ToLower() == "kraj pochodzenia").Value ?? "" }, // kraj pochodzenia
+                    { "extra_field_7525", product.Name ?? "" }, // nazwa miinto
+                    { "extra_field_7526", parametersDictionary.FirstOrDefault(p => p.Key.ToLower() == "kolor").Value ?? "" }, // kolor miinto
+                    { "extra_field_7527", parametersDictionary.FirstOrDefault(p => p.Key.ToLower() == "rozmiar").Value ?? "" }, // rozmiar miinto
+                    { "extra_field_7528", parametersDictionary.FirstOrDefault(p => p.Key.ToLower() == "oznaczenie płci").Value ?? "" } // płeć
                 }
             };
         }

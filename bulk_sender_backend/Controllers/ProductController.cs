@@ -29,7 +29,7 @@ namespace bulk_sender_backend.Controllers
         [Route("api/products/{page}/{quantity}")]
         public async Task<IActionResult> GetManyProducts(int page, int quantity)
         {
-            GetManyProductsQuery query = new GetManyProductsQuery(page, quantity);
+            GetManyProductsQuery query = new GetManyProductsQuery(quantity, page);
             List<ProductDTO> products = await _mediator.Send(query);
 
             return Ok(products);
