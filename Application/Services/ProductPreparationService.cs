@@ -55,32 +55,33 @@ namespace Application.Services
             string parametersString = GenerateParametersString(product);
 
             Dictionary<string, string> parametersDictionary = new Dictionary<string, string>();
-            foreach (var parameter in product.Parameters)
-            {
-                if(string.IsNullOrWhiteSpace(parameter.Name) || string.IsNullOrWhiteSpace(parameter.Value))
-                    continue;
 
-                if(parameter.Name.ToLower() == "płeć")
+                foreach (var parameter in product.Parameters)
                 {
-                    switch(parameter.Value.ToLower())
+                    if (string.IsNullOrWhiteSpace(parameter.Name) || string.IsNullOrWhiteSpace(parameter.Value))
+                        continue;
+
+                    if (parameter.Name.ToLower() == "płeć" && !product.Parameters.Any(p => p.Name == "Oznaczenie płci"))
                     {
-                        case "męskie":
-                            parametersDictionary.Add("Oznaczenie płci", "M");
-                            break;
-                        case "damskie":
-                            parametersDictionary.Add("Oznaczenie płci", "F");
+                        switch (parameter.Value.ToLower())
+                        {
+                            case "męskie":
+                                parametersDictionary.Add("Oznaczenie płci", "M");
+                                break;
+                            case "damskie":
+                                parametersDictionary.Add("Oznaczenie płci", "F");
 
-                            break;
-                        case "unisex":
-                            parameter.Value = "U";
-                            break;
-                        default:
-                            break;
+                                break;
+                            case "unisex":
+                                parameter.Value = "U";
+                                break;
+                            default:
+                                break;
+                        }
                     }
-                }
 
-                parametersDictionary.Add(parameter.Name, parameter.Value);
-            }
+                    parametersDictionary.Add(parameter.Name, parameter.Value);
+                }
 
             if (product.BaselinkerParentId == 0)
                 product.Ean = "";

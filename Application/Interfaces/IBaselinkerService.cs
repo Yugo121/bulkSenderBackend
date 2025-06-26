@@ -7,6 +7,5 @@ namespace Application.Interfaces
         Task<int> SendProductToBaselinker(ProductToBaselinkerDTO product, CancellationToken cancellationToken);
         Task<string> GetCategories(CancellationToken cancellationToken);
         Task<string> GetBrands(CancellationToken cancellationToken);
-
     }
 }

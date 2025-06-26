@@ -21,7 +21,7 @@ namespace bulk_sender_backend.Controllers
             GetProductQuery query = new GetProductQuery(id);
 
             ProductDTO product = await _mediator.Send(query);
-            
+
             return Ok(product);
         }
 
@@ -83,6 +83,14 @@ namespace bulk_sender_backend.Controllers
             DeleteProductCommand command = new DeleteProductCommand(id);
             Guid productId = await _mediator.Send(command);
             return Ok(productId);
+        }
+        [HttpPost]
+        [Route("api/products/addMany")]
+        public async Task<IActionResult> AddManyProducts([FromBody] List<ProductDTO> products)
+        {
+            AddManyProductsCommand command = new AddManyProductsCommand(products);
+            List<Guid> productIds = await _mediator.Send(command);
+            return Ok(productIds);
         }
     }
 }

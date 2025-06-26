@@ -28,11 +28,11 @@ namespace Infrastructure.Services
             {
                 Content = content
             };
-            
+
             request.Headers.Add("X-BLToken", _token);
-            
+
             var response = _httpClient.SendAsync(request, cancellationToken);
-            
+
             string result = await response.Result.Content.ReadAsStringAsync(cancellationToken);
 
             if (response.Result.IsSuccessStatusCode && result.Contains("SUCCESS"))
