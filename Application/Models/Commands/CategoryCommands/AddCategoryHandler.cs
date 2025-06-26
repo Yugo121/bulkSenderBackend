@@ -20,11 +20,12 @@ namespace Application.Models.Commands.CategoryCommands
                 Id = Guid.NewGuid(),
                 Aliases = request.category.Aliases.Select(a => new CategoryAlias
                 {
-                    Id = a.Id,
+                    Id = Guid.NewGuid(),
                     Name = a.Name,
                     CategoryId = a.CategoryId
                 }).ToList(),
-                BaselinkerId = request.category.BaselinkerId
+                BaselinkerId = request.category.BaselinkerId,
+                BaselinkerName = request.category.BaselinkerName,
             };
 
             await _appDbContext.Categories.AddAsync(category);

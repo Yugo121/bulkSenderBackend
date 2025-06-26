@@ -24,6 +24,7 @@ namespace Infrastructure
 
             services.AddScoped<ICsvProductParser, CsvProductParser>();
             services.AddHttpClient<IBaselinkerService, BaselinkerService>();
+            services.AddHttpClient<INuboService, NuboService>();
         }
     }
 }
