@@ -8,6 +8,7 @@ new InfrastructureService(builder.Services, builder.Configuration);
 new ApplicationService(builder.Services, builder.Configuration);
 
 builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(typeof(AddBrandCommand).Assembly));
+builder.Services.AddDataProtection();
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();

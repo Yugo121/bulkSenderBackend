@@ -68,6 +68,14 @@ namespace bulk_sender_backend.Controllers
             await _mediator.Send(new ImportCsvCommand(request));
             return Ok(request);
         }
+        [HttpPost]
+        [Route("api/products/addMany")]
+        public async Task<IActionResult> AddManyProducts([FromBody] List<ProductDTO> products)
+        {
+            AddManyProductsCommand command = new AddManyProductsCommand(products);
+            List<Guid> productIds = await _mediator.Send(command);
+            return Ok(productIds);
+        }
         [HttpPut]
         [Route("api/product/edit/{id}")]
         public async Task<IActionResult> UpdateProduct(Guid id, [FromBody] ProductDTO product)
@@ -83,14 +91,6 @@ namespace bulk_sender_backend.Controllers
             DeleteProductCommand command = new DeleteProductCommand(id);
             Guid productId = await _mediator.Send(command);
             return Ok(productId);
-        }
-        [HttpPost]
-        [Route("api/products/addMany")]
-        public async Task<IActionResult> AddManyProducts([FromBody] List<ProductDTO> products)
-        {
-            AddManyProductsCommand command = new AddManyProductsCommand(products);
-            List<Guid> productIds = await _mediator.Send(command);
-            return Ok(productIds);
         }
     }
 }

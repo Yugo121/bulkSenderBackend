@@ -17,6 +17,11 @@ namespace Application.Models.Commands.MappingCommands
             Brand brand =  await _appDbContext.Brands.FirstOrDefaultAsync(b => b.Name == request.mapping.Brand.Name, cancellationToken);
             Category category = await _appDbContext.Categories.FirstOrDefaultAsync(c => c.BaselinkerId == request.mapping.Category.BaselinkerId, cancellationToken);
 
+            var exsitingMapping =await  _appDbContext.Mappings.FirstOrDefaultAsync(m => m.CategoryId == category.Id && m.BrandId == brand.Id);
+
+            if (exsitingMapping != null)
+                return exsitingMapping.Id;
+
             Mapping mapping = new()
             {
                 Id = Guid.NewGuid(),
