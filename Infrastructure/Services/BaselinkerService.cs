@@ -1,6 +1,9 @@
 ﻿using Application.Interfaces;
 using Application.Models.DTO_s;
+using Application.Models.Queries.SecretQueries;
+using MediatR;
 using Microsoft.Extensions.Configuration;
+using System.Net.Sockets;
 using System.Text.Json;
 
 namespace Infrastructure.Services
@@ -8,14 +11,30 @@ namespace Infrastructure.Services
     internal class BaselinkerService : IBaselinkerService
     {
         private readonly HttpClient _httpClient;
-        private readonly string _token;
-        public BaselinkerService(HttpClient httpClient, IConfiguration config)
+        private string? _token;
+        private readonly IMediator _mediator;
+        public BaselinkerService(HttpClient httpClient, IConfiguration config, IMediator mediator)
         {
             _httpClient = httpClient;
+            _mediator = mediator;
             _token = config["Baselinker:Token"];
+        }
+
+        private async Task<string> GetSecretAsync(string secretName, CancellationToken cancellationToken)
+        {
+            string secret = string.Empty;
+
+            if (string.IsNullOrEmpty(_token))
+            {
+                secret = await _mediator.Send(new GetSecretQuery(secretName), cancellationToken);
+            }
+
+            return secret;
         }
         public async Task<string> GetBrands(CancellationToken cancellationToken)
         {
+            _token = await GetSecretAsync("token", cancellationToken);
+
             var apiParams = new Dictionary<string, string>
             {
                 { "method", "getInventoryManufacturers" },
@@ -47,9 +66,12 @@ namespace Infrastructure.Services
 
         public async Task<string> GetCategories(CancellationToken cancellationToken)
         {
+            _token = await GetSecretAsync("token", cancellationToken);
+            string inwentoryId = await GetSecretAsync("catalogueId", cancellationToken);
+
             var parameters = new
             {
-                inventory_id = 10621, //id kat głowny
+                inventory_id = inwentoryId, //id kat głowny
             };
 
             var apiParams = new Dictionary<string, string>
@@ -81,10 +103,14 @@ namespace Infrastructure.Services
 
         public async Task<int> SendProductToBaselinker(ProductToBaselinkerDTO product, CancellationToken cancellationToken)
         {
+            _token = await GetSecretAsync("token", cancellationToken);
+            string inventoryId = await GetSecretAsync("catalogueId", cancellationToken);
+            string warehouseId = await GetSecretAsync("warehouseId", cancellationToken);
+
             var payload = new
             {
 
-                inventory_id = 10621, //id kat głowny
+                inventory_id = inventoryId, //id kat głowny
                 parent_id = product.ParentId,
                 ean = product.Ean,
                 sku = product.Sku,
@@ -93,7 +119,7 @@ namespace Infrastructure.Services
                 prices = product.Prices,
                 stock = new Dictionary<string, int>
                 {
-                    { "bl_5248", 0 }, //id magazynu głównego,
+                    { warehouseId, 0 }, //id magazynu głównego,
                 },
                 text_fields = product.TextFields
             };

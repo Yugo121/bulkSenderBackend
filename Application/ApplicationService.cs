@@ -12,6 +12,7 @@ namespace Application
             services.AddScoped<IProductImportService, ProductImportService>();
             services.AddScoped<IProductPreparationService, ProductPreparationService>();
             services.AddScoped<IProductGroupingService, ProductGroupingService>();
+            services.AddScoped<ISecretEncryptionService, SecretEncryptionService>();
         }
 
     }

@@ -23,9 +23,20 @@ namespace Application.Models.Commands.BaselinkerCommands
             var productGroup = await _productGroupingService.GroupProductsAsync(request.product, cancellationToken);
             var mapping = await _productGroupingService.GetMappingForProduct(request.product, cancellationToken);
 
-            var isInBaselinker = productGroup.FirstOrDefault(p => p.Sku == request.product.Sku).IsAddedToBaselinker;
+            if (productGroup.Any(p => p.BaselinkerParentId != 0)) 
+            {
+                int parentProductId = productGroup.FirstOrDefault(p => p.BaselinkerParentId != 0).BaselinkerParentId;
+                request.product.BaselinkerParentId = parentProductId;
+                await _productGroupingService.UpdateParentIdAsync(productGroup, parentProductId, cancellationToken);
 
-            if (!isInBaselinker)
+                foreach (var item in productGroup)
+                    item.BaselinkerParentId = parentProductId;
+            }
+
+
+            var productToAdd = productGroup.FirstOrDefault(p => p.Sku == request.product.Sku);
+
+            if (!productToAdd.IsAddedToBaselinker && productToAdd.BaselinkerParentId == 0)
             {
                 ProductDTO mainProduct = request.product;
                 mainProduct.Sku = _productPreparationService.ExtractMainSku(request.product.Sku);

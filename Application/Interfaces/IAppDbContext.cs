@@ -13,6 +13,7 @@ namespace Application.Interfaces
         public DbSet<Parameter> Parameters { get; set; }
         public DbSet<Mapping> Mappings { get; set; }
         public DbSet<MappingEntry> MappingEntries { get; set; }
+        public DbSet<SecretEntity> Secrets { get; set; }
 
         Task<int> SaveChangesAsync(CancellationToken cancellationToken);
 

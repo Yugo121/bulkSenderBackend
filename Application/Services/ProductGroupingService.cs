@@ -21,11 +21,13 @@ namespace Application.Services
             string mainSku = _productPreparationService.ExtractMainSku(product.Sku);
 
             var entities = await _appDbContext.Products
+                .AsNoTracking()
+                .Where(p => p.Sku.StartsWith(mainSku))
                 .Include(p => p.Category)
                     .ThenInclude(c => c.Aliases)
                 .Include(p => p.Brand)
                 .Include(p => p.Parameters)
-                .Where(p => p.Sku.Contains(mainSku))
+                .AsSplitQuery()
                 .ToListAsync();
 
             var dtos = entities.Select(p => MapToDTO(p)).ToList();
