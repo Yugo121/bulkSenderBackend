@@ -26,7 +26,7 @@ namespace Infrastructure.Data
 
             modelBuilder.Entity<Product>()
                 .Property(p => p.Price)
-                .HasPrecision(18, 2);
+                .HasPrecision(18, 2); // dla sql lite na floata zmienić
 
             modelBuilder.Entity<Product>()
                 .HasOne(p => p.Brand)
