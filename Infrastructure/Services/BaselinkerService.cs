@@ -17,17 +17,14 @@ namespace Infrastructure.Services
         {
             _httpClient = httpClient;
             _mediator = mediator;
-            _token = config["Baselinker:Token"];
+            _token = "";
         }
 
         private async Task<string> GetSecretAsync(string secretName, CancellationToken cancellationToken)
         {
             string secret = string.Empty;
 
-            if (string.IsNullOrEmpty(_token))
-            {
                 secret = await _mediator.Send(new GetSecretQuery(secretName), cancellationToken);
-            }
 
             return secret;
         }
@@ -71,7 +68,7 @@ namespace Infrastructure.Services
 
             var parameters = new
             {
-                inventory_id = inwentoryId, //id kat głowny
+                inventory_id = Int32.Parse(inwentoryId), //id kat głowny
             };
 
             var apiParams = new Dictionary<string, string>
